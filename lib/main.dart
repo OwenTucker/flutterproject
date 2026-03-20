@@ -21,7 +21,6 @@ class PumpApp extends StatelessWidget {
 }
 
 const int kGlucose = 120;
-const double kIOB = 0;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,6 +30,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _controller = TextEditingController();
+  double _iob = 0;
 
   void _onDeliver() {
     final units = double.tryParse(_controller.text);
@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         units: units,
         onConfirm: () {
           HapticFeedback.heavyImpact();
+          setState(() => _iob += units);
           Navigator.of(context).popUntil((r) => r.isFirst);
           _controller.clear();
         },
@@ -60,15 +61,21 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Column(children: [Text('$kGlucose',style: const TextStyle(fontSize: 96, fontWeight: FontWeight.w900, height: 1.0)),const Text('mg/dL',style: TextStyle(fontSize: 16, color: Colors.white54)),]),
+                Column(children: [
+                  Text('$kGlucose', style: const TextStyle(fontSize: 96, fontWeight: FontWeight.w900, height: 1.0)),
+                  const Text('mg/dL', style: TextStyle(fontSize: 16, color: Colors.white54)),
+                ]),
                 const SizedBox(width: 32),
-                Column(children: [Text('$kIOB',style: const TextStyle(fontSize: 96, fontWeight: FontWeight.w900, height: 1.0)),const Text('IOB',style: TextStyle(fontSize: 16, color: Colors.white54)),]),],),
+                Column(children: [
+                  Text('$_iob', style: const TextStyle(fontSize: 96, fontWeight: FontWeight.w900, height: 1.0)),
+                  const Text('IOB', style: TextStyle(fontSize: 16, color: Colors.white54)),
+                ]),
+              ],
+            ),
             const SizedBox(height: 48),
             const Divider(color: Colors.white12),
             const SizedBox(height: 48),
-
-           
-            const Text('Bolus',textAlign: TextAlign.center,style: TextStyle(fontSize: 18, color: Colors.white54)),
+            const Text('Bolus', textAlign: TextAlign.center, style: TextStyle(fontSize: 18, color: Colors.white54)),
             const SizedBox(height: 16),
             TextField(
               controller: _controller,
